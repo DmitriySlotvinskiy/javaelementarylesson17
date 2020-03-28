@@ -21,12 +21,16 @@ public class Task1 {
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Please enter date in format day.month.year: ");
-        String date;
-        do {
-            date = scanner.nextLine();
-        } while (!isCorrect(date));
+        String date = "";
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Please enter date in format day.month.year: ");
+            do {
+                date = scanner.nextLine();
+            } while (!isCorrect(date));
+        } catch (Exception e) {
+            showErrorMessage();
+        }
 
         Response response = HttpUtil.sendRequest(URL + date);
         if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -43,7 +47,13 @@ public class Task1 {
             showErrorMessage();
             return false;
         }
-        LocalDate inputDate = LocalDate.parse(date, FORMATTER);
+        LocalDate inputDate = null;
+        try {
+            inputDate = LocalDate.parse(date, FORMATTER);
+        } catch (Exception e) {
+            showErrorMessage();
+            return false;
+        }
         if (inputDate.isAfter(ChronoLocalDate.from(PB_ESTABLISH_DATE)) &&
                 inputDate.isBefore(ChronoLocalDate.from(CURRENT_DATE))) {
             return true;
